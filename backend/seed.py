@@ -6,6 +6,12 @@ DB = os.environ.get("DB_PATH", "./splitwise.db")
 
 def hash_pw(pw): return hashlib.sha256(pw.encode()).hexdigest()
 
+# Create schema first (idempotent — uses IF NOT EXISTS) so seed works standalone
+with open("schema.sql") as f:
+    _conn = sqlite3.connect(DB)
+    _conn.executescript(f.read())
+    _conn.close()
+
 conn = sqlite3.connect(DB)
 
 users = [
