@@ -33,12 +33,20 @@ function App() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [subPage, setSubPage] = useState('expenses');
   const [loading, setLoading] = useState(true);
+  const [dark, setDark] = useState(() => localStorage.getItem('theme') === 'dark');
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+  }, [dark]);
 
   useEffect(() => {
     const saved = localStorage.getItem('user');
     if (saved) { setUser(JSON.parse(saved)); setPage('dashboard'); }
     setLoading(false);
   }, []);
+
+  const toggleDark = () => setDark(d => !d);
 
   const login = (userData, token) => {
     localStorage.setItem('token', token);
@@ -56,13 +64,13 @@ function App() {
 
   if (loading) return <div className="loading-screen"><div className="spinner"/></div>;
 
-  if (!user) return <AuthPage onLogin={login} />;
-  if (!selectedGroup) return <Dashboard user={user} onSelectGroup={(g) => { setSelectedGroup(g); setPage('group'); setSubPage('expenses'); }} onLogout={logout} />;
-  return <GroupPage user={user} group={selectedGroup} subPage={subPage} onSubPage={setSubPage} onBack={() => setSelectedGroup(null)} onLogout={logout} />;
+  if (!user) return <AuthPage onLogin={login} dark={dark} toggleDark={toggleDark} />;
+  if (!selectedGroup) return <Dashboard user={user} onSelectGroup={(g) => { setSelectedGroup(g); setPage('group'); setSubPage('expenses'); }} onLogout={logout} dark={dark} toggleDark={toggleDark} />;
+  return <GroupPage user={user} group={selectedGroup} subPage={subPage} onSubPage={setSubPage} onBack={() => setSelectedGroup(null)} onLogout={logout} dark={dark} toggleDark={toggleDark} />;
 }
 
 // ─── AUTH PAGE ────────────────────────────────────────────────────────────────
-function AuthPage({ onLogin }) {
+function AuthPage({ onLogin, dark, toggleDark }) {
   const [mode, setMode] = useState('login');
   const [form, setForm] = useState({ username: '', email: '', password: '', display_name: '' });
   const [err, setErr] = useState('');
@@ -82,26 +90,43 @@ function AuthPage({ onLogin }) {
 
   return (
     <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-logo">💸</div>
-        <h1 className="auth-title">SplitSmart</h1>
-        <p className="auth-sub">Split expenses fairly. No drama.</p>
-        <div className="tab-row">
-          <button className={`tab-btn ${mode==='login'?'active':''}`} onClick={() => setMode('login')}>Sign in</button>
-          <button className={`tab-btn ${mode==='register'?'active':''}`} onClick={() => setMode('register')}>Create account</button>
+      <div className="auth-panel-left">
+        <div className="auth-brand">
+          <div className="auth-brand-logo">💸</div>
+          <div className="auth-brand-name">SplitSmart</div>
+          <div className="auth-brand-sub">Split expenses fairly. No drama.</div>
+          <div className="auth-feature"><div className="auth-feature-dot"/><span className="auth-feature-text">Track shared flat expenses with fair splits</span></div>
+          <div className="auth-feature"><div className="auth-feature-dot"/><span className="auth-feature-text">Multi-currency support with historical rates</span></div>
+          <div className="auth-feature"><div className="auth-feature-dot"/><span className="auth-feature-text">Smart CSV import with anomaly detection</span></div>
+          <div className="auth-feature"><div className="auth-feature-dot"/><span className="auth-feature-text">Membership-aware balance calculations</span></div>
         </div>
-        <form onSubmit={submit} className="auth-form">
-          {mode === 'register' && <>
-            <input placeholder="Display name" value={form.display_name} onChange={e => setForm({...form, display_name: e.target.value})} required />
-            <input placeholder="Email" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
-          </>}
-          <input placeholder="Username" value={form.username} onChange={e => setForm({...form, username: e.target.value})} required />
-          <input placeholder="Password" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required />
-          {err && <div className="error-msg">{err}</div>}
-          <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}</button>
-        </form>
-        <div className="demo-creds">
-          <strong>Demo users:</strong> aisha, rohan, priya, meera, sam (password: pass123)
+      </div>
+      <div className="auth-panel-right">
+        <div className="auth-card">
+          <div className="auth-card-top">
+            <div>
+              <h1 className="auth-title">{mode === 'login' ? 'Welcome back' : 'Create account'}</h1>
+              <p className="auth-sub">{mode === 'login' ? 'Sign in to your account' : 'Join your group'}</p>
+            </div>
+            <button className="dark-toggle" onClick={toggleDark} title="Toggle dark mode">{dark ? '☀️' : '🌙'}</button>
+          </div>
+          <div className="tab-row">
+            <button className={`tab-btn ${mode==='login'?'active':''}`} onClick={() => setMode('login')}>Sign in</button>
+            <button className={`tab-btn ${mode==='register'?'active':''}`} onClick={() => setMode('register')}>Register</button>
+          </div>
+          <form onSubmit={submit} className="auth-form">
+            {mode === 'register' && <>
+              <input placeholder="Display name" value={form.display_name} onChange={e => setForm({...form, display_name: e.target.value})} required />
+              <input placeholder="Email" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
+            </>}
+            <input placeholder="Username" value={form.username} onChange={e => setForm({...form, username: e.target.value})} required />
+            <input placeholder="Password" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required />
+            {err && <div className="error-msg">{err}</div>}
+            <button type="submit" className="btn-primary" disabled={loading}>{loading ? 'Please wait…' : mode === 'login' ? 'Sign in' : 'Create account'}</button>
+          </form>
+          <div className="demo-creds">
+            <strong>Demo accounts:</strong> aisha, rohan, priya, meera, sam — password: <strong>pass123</strong>
+          </div>
         </div>
       </div>
     </div>
@@ -109,7 +134,7 @@ function AuthPage({ onLogin }) {
 }
 
 // ─── DASHBOARD ────────────────────────────────────────────────────────────────
-function Dashboard({ user, onSelectGroup, onLogout }) {
+function Dashboard({ user, onSelectGroup, onLogout, dark, toggleDark }) {
   const [groups, setGroups] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
@@ -134,6 +159,7 @@ function Dashboard({ user, onSelectGroup, onLogout }) {
         </div>
         <div className="topbar-right">
           <span className="user-name">👤 {user.display_name}</span>
+          <button className="dark-toggle" onClick={toggleDark} title="Toggle dark mode">{dark ? '☀️' : '🌙'}</button>
           <button className="btn-ghost" onClick={onLogout}>Sign out</button>
         </div>
       </header>
@@ -211,7 +237,7 @@ function CreateGroupModal({ allUsers, currentUser, onClose, onCreated }) {
 }
 
 // ─── GROUP PAGE ───────────────────────────────────────────────────────────────
-function GroupPage({ user, group, subPage, onSubPage, onBack, onLogout }) {
+function GroupPage({ user, group, subPage, onSubPage, onBack, onLogout, dark, toggleDark }) {
   const [groupData, setGroupData] = useState(group);
   const api = useApi();
 
@@ -237,6 +263,7 @@ function GroupPage({ user, group, subPage, onSubPage, onBack, onLogout }) {
         </div>
         <div className="topbar-right">
           <span className="user-name">👤 {user.display_name}</span>
+          <button className="dark-toggle" onClick={toggleDark} title="Toggle dark mode">{dark ? '☀️' : '🌙'}</button>
           <button className="btn-ghost" onClick={onLogout}>Sign out</button>
         </div>
       </header>
