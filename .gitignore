@@ -8,3 +8,6 @@ frontend/build/
 *.egg-info/
 dist/
 .DS_Store
+.claude/
+backend/package.json
+frontend/package-lock.json
