@@ -923,6 +923,10 @@ def get_import_report(gid, rid):
     r["report_json"] = json.loads(r["report_json"])
     return jsonify(r)
 
+@app.route("/", methods=["GET"])
+def root():
+    return jsonify({"service":"SplitSmart API","status":"ok","docs":"/api/health"})
+
 @app.route("/api/health", methods=["GET"])
 def health():
     return jsonify({"status":"ok","time":datetime.utcnow().isoformat()})

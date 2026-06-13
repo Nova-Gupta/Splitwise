@@ -4,8 +4,9 @@
 
 ## Live Demo
 
-- **App:** https://splitsmart-app.onrender.com *(deploy once your Render services are created)*
-- **GitHub:** https://github.com/your-username/splitsmart
+- **App (frontend):** https://splitsmart-3pyw.onrender.com
+- **API (backend):** https://splitwise-api-urn0.onrender.com
+- **GitHub:** https://github.com/Nova-Gupta/Splitwise
 
 ---
 
@@ -83,7 +84,7 @@ REACT_APP_API_URL=http://localhost:5000 npm start
 | Root dir  | `frontend/`                                        |
 | Build     | `npm install && npm run build`                     |
 | Publish   | `build/`                                           |
-| Env var   | `REACT_APP_API_URL=https://<your-backend>.onrender.com` |
+| Env var   | `REACT_APP_API_URL=https://splitwise-api-urn0.onrender.com` |
 
 ---
 
