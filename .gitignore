@@ -1,0 +1,10 @@
+node_modules/
+__pycache__/
+*.pyc
+backend/splitwise.db
+backend/uploads/
+frontend/build/
+.env
+*.egg-info/
+dist/
+.DS_Store
