@@ -114,8 +114,8 @@ splitwise-app/
 │   └── splitwise.db    # SQLite database (auto-created on first run)
 ├── frontend/
 │   └── src/
-│       ├── App.js      # Complete React SPA (940 lines, intentionally single file)
-│       └── App.css     # All styles (227 lines)
+│       ├── App.js      # Complete React SPA (969 lines, intentionally single file)
+│       └── App.css     # All styles (626 lines, full dark mode + design tokens)
 ├── expenses_export.csv # Sample CSV with deliberate anomalies
 ├── SCOPE.md            # Anomaly log (27 detected) + DB schema documentation
 ├── DECISIONS.md        # Engineering decision log (10 decisions)
@@ -136,3 +136,4 @@ splitwise-app/
 - **CSV import** with a full anomaly report: 27 anomalies detected, policies documented per anomaly
 - **Duplicate approval queue** — potential duplicates held for user approval before import (Meera's requirement)
 - **Membership-aware splits** — expenses dated outside a member's active period don't affect them (Sam's requirement)
+- **Dark mode** — toggle between light and dark themes, preference saved to localStorage
